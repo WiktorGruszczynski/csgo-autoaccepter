@@ -92,13 +92,14 @@ class AutoAccept:
         self.display = self.rect[0]//self.rect[3]
 
 
-with open("settings.json", "r") as file:
-    settings = json.loads(file.read())
+if __name__ == "__main__":
+    #read settings from json file
+    with open("settings.json", "r") as Jsonfile:
+        settings = json.loads(Jsonfile.read())
 
+    
+    print(time.strftime("[%H:%M:%S] - Started program"))
 
+    AutoAccept(settings)
 
-print(time.strftime("[%H:%M:%S] - Started program"))
-
-AutoAccept(settings)
-
-input("Press any button to exit...")
+    input("Press any button to exit...")
