@@ -5,7 +5,6 @@ import win32api
 import graphics.bitmap as bitmap
 
 
-
 class Image:
     def __init__(self, width, height, bitsperpixel, bits) -> None:
         self.width = width
@@ -40,19 +39,24 @@ def load(path):
 
     return frombuffer(data)
 
-def screen_size():
+def screen_size(all_monitors=False):
+    if all_monitors:
+        a, b = 78, 79
+    else:
+        a, b = 0, 1
+    
+
     #get width from system
-    width = win32api.GetSystemMetrics(0)
+    width = win32api.GetSystemMetrics(a)
 
     #get height from system
-    height = win32api.GetSystemMetrics(1)
+    height = win32api.GetSystemMetrics(b)
     return width, height
 
 
 def screenshot(windowname:str=None, crop:tuple[int, int, int, int] = None):
     if crop == None and windowname == None:
-        width = win32api.GetSystemMetrics(0)
-        height = win32api.GetSystemMetrics(1)
+        width, height = screen_size()
         x,y = 0,0
 
     elif windowname != None:
@@ -72,13 +76,15 @@ def screenshot(windowname:str=None, crop:tuple[int, int, int, int] = None):
         width += x
         height += y
 
-    
+
     wDC = win32gui.GetWindowDC(0)
     dcObj=win32ui.CreateDCFromHandle(wDC)
     cDC=dcObj.CreateCompatibleDC()
     dataBitMap = win32ui.CreateBitmap()
     dataBitMap.CreateCompatibleBitmap(dcObj, width-x, height-y)
     cDC.SelectObject(dataBitMap)
+
+    #paint bitmap
     cDC.BitBlt((0,0),(width-x, height-y) , dcObj, (x,y), win32con.SRCCOPY)
 
     #read bits from bitmap object
@@ -97,4 +103,4 @@ def screenshot(windowname:str=None, crop:tuple[int, int, int, int] = None):
 
 
 
-    
+  
