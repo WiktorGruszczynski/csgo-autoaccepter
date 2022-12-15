@@ -44,7 +44,6 @@ def screen_size(all_monitors=False):
         a, b = 78, 79
     else:
         a, b = 0, 1
-    
 
     #get width from system
     width = win32api.GetSystemMetrics(a)
