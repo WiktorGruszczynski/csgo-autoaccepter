@@ -40,6 +40,14 @@ def load(path):
 
     return frombuffer(data)
 
+def screen_size():
+    #get width from system
+    width = win32api.GetSystemMetrics(0)
+
+    #get height from system
+    height = win32api.GetSystemMetrics(1)
+    return width, height
+
 
 def screenshot(windowname:str=None, crop:tuple[int, int, int, int] = None):
     if crop == None and windowname == None:
@@ -88,11 +96,5 @@ def screenshot(windowname:str=None, crop:tuple[int, int, int, int] = None):
     return Image(width=info["bmWidth"], height=info["bmHeight"], bitsperpixel=info["bmBitsPixel"], bits=bits)
 
 
-def screen():
-    #get width from system
-    width = win32api.GetSystemMetrics(0)
 
-    #get height from system
-    height = win32api.GetSystemMetrics(1)
-    return width, height
     
