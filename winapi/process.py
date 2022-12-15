@@ -38,7 +38,6 @@ def is_process_alive(process:str):
         return False
 
 
-
 def getPid(process_name:str):
     #list all active processes
     processes = listProcesses()
