@@ -2,6 +2,31 @@ import winapi
 import graphics as gpu
 import time
 import json
+import os
+
+
+def get_settings(path:str = None):
+    if path == None:
+        path = "settings.json" 
+
+    #check if settings file exists
+    if os.path.isfile(path) == True:
+
+        #read settings from json file
+        with open(path, "r") as Jsonfile:
+            settings = json.loads(Jsonfile.read())
+
+    else:
+        data = {"auto exit": True,"echo": True, "delay": 0}
+
+        with open(path, "w") as JsonFile:
+            json.dump(data, JsonFile, indent=4)
+
+        return get_settings(path)
+            
+
+    return settings
+
 
 
 class AutoAccept:
@@ -17,12 +42,19 @@ class AutoAccept:
         self.settings = settings
 
 
+    def run(self):
+        #set echo variable
+        echo = self.settings["echo"]
+        delay = self.settings["delay"]
+
+        if echo: print(time.strftime("[%H:%M:%S] - Started program"))
+
         #wait until process csgo.exe is alive
         while not winapi.is_process_alive(self.process_name): 
             time.sleep(1)
 
-        print(time.strftime("[%H:%M:%S] - Counter-Strike: Global Offensive is on"))
-        
+        if echo: print(time.strftime("[%H:%M:%S] - Counter-Strike: Global Offensive is on"))
+
         #read information about csgo window
         self.GameInfo()
         
@@ -37,25 +69,26 @@ class AutoAccept:
             #check if image is the same as original accept button
             similar = self.check_image(img.bits)
 
-            #delay to reduce memory usage
-            time.sleep(0.05)
-
         
-        if similar == True:
-            #calculate position for mouse
-            pos = (self.size[0]//2 + self.size[0]*self.display, self.top_distance()+10)
+        #calculate position for mouse
+        pos = (self.size[0]//2 + self.size[0]*self.display, self.top_distance()+10)
 
-            #move mouse
-            winapi.mouse_move(pos)
+        #move mouse
+        winapi.mouse_move(pos)
+        
+        #add delay
+        if delay > 0 and delay <= 20: time.sleep(delay)
 
-            #clicl left button
-            winapi.click(pos)
+        #click left button
+        winapi.click(pos)
 
-        print(time.strftime("[%H:%M:%S] - Matchmaking has been accepted"))
+        if echo: print(time.strftime("[%H:%M:%S] - Matchmaking has been accepted"))
 
-        if settings["auto exit"] == True:
+        if self.settings["auto exit"] == True:
             exit(0)
-        
+        else:
+            input("Press any button to exit...")
+
 
     def check_image(self, bits):
         #draw original image, every pixel of this image have the same color
@@ -92,14 +125,5 @@ class AutoAccept:
         self.display = self.rect[0]//self.rect[3]
 
 
-if __name__ == "__main__":
-    #read settings from json file
-    with open("settings.json", "r") as Jsonfile:
-        settings = json.loads(Jsonfile.read())
 
-    
-    print(time.strftime("[%H:%M:%S] - Started program"))
 
-    AutoAccept(settings)
-
-    input("Press any button to exit...")
