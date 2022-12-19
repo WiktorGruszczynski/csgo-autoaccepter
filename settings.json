@@ -1,3 +1,5 @@
 {
-    "auto exit": true
+    "auto exit": true,
+    "echo": true,
+    "delay": 0
 }
